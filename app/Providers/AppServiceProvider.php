@@ -29,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Model::unguard();
         Model::shouldBeStrict();
+        Model::automaticallyEagerLoadRelationships();
     }
 
     public function configureURL(): void
