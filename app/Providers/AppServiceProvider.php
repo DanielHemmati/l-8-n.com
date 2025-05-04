@@ -2,9 +2,14 @@
 
 namespace App\Providers;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Vite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,21 +26,47 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureCommands();
         $this->modelConfiguring();
         $this->configureURL();
+        $this->configureDate();
+        $this->configureVite();
     }
 
-    public function modelConfiguring(): void
+    private function configureCommands(): void
     {
-        Model::unguard();
+        DB::prohibitDestructiveCommands(App::isProduction());
+    }
+
+    private function modelConfiguring(): void
+    {
+        Model::unguard(); // b/c life is too short
         Model::shouldBeStrict();
         Model::automaticallyEagerLoadRelationships();
     }
 
-    public function configureURL(): void
+    /**
+     * really good tut why we need this
+     *
+     * @see https://dyrynda.com.au/blog/laravel-immutable-dates
+     */
+    private function configureDate(): void
     {
-        if ($this->app->environment('production')) {
-            URL::forceScheme('https');
-        }
+        Date::use(CarbonImmutable::class);
+    }
+
+    /**
+     * This is optional, but it's good force https in prod
+     *
+     * @see 
+     */
+    private function configureURL(): void
+    {
+        URL::forceHttps(App::isProduction());
+    }
+
+    private function configureVite(): void
+    {
+        Vite::useAggressivePrefetching();
     }
 }
