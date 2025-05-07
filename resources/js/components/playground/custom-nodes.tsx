@@ -15,8 +15,8 @@ import {
     type Node,
 } from '@xyflow/react';
 
-import '@xyflow/react/dist/style.css';
 import { ChangeEvent, CSSProperties, useCallback } from 'react';
+import '@xyflow/react/dist/style.css';
 
 interface TextUpdaterNodeData {
     data: string;

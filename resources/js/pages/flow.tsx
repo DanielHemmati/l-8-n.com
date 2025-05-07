@@ -5,10 +5,15 @@
 // import Interactivity from '@/components/playground/interactivity';
 // import CustomNodes from '@/components/playground/custom-nodes';
 // import RandomHandle from '@/components/playground/random-handle';
-import CustomEdgeTutorial from '@/components/playground/custom-edges';
+// import CustomEdgeTutorial from '@/components/playground/custom-edges';
+// import ColorModeFlow from '@/components/playground/color-mode-flow';
+// import DefaultStyle from '@/components/playground/default-style';
+// import ColorModeFlow from '@/components/playground/color-mode-flow';
+// import DefaultStyle from '@/components/playground/default-style';
+import SubFlows from '@/components/playground/sub-flows';
 
 function Flow() {
-    return <CustomEdgeTutorial />;
+    return <SubFlows />;
 }
 
 export default Flow;
