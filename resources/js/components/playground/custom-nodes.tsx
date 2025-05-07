@@ -22,8 +22,8 @@ interface TextUpdaterNodeData {
     data: string;
     isConnectable: boolean;
 }
-const handleStyle = { left: 10 };
 
+const handleStyle = { left: 10 };
 function TextUpdaterNode({ data, isConnectable }: TextUpdaterNodeData) {
     const onChange = useCallback((evt: ChangeEvent<HTMLInputElement>) => {
         console.log(evt.target.value);
@@ -63,6 +63,13 @@ function TextUpdaterNode({ data, isConnectable }: TextUpdaterNodeData) {
                 id="b"
                 isConnectable={isConnectable}
             />
+            <Handle
+                type="source"
+                position={Position.Bottom}
+                id="c"
+                style={{ left: 30 }}
+                isConnectable={isConnectable}
+            />
         </div>
     );
 }
@@ -78,9 +85,31 @@ const initialNodes: Node[] = [
         position: { x: 0, y: 0 },
         data: { value: 123 },
     },
+    {
+        id: 'node-2',
+        type: 'output',
+        position: { x: 0, y: 200 },
+        data: { label: 'node 2' },
+    },
+    {
+        id: 'node-3',
+        type: 'output',
+        position: { x: 200, y: 200 },
+        data: { label: 'node 3' },
+    },
+    {
+        id: 'node-4',
+        type: 'output',
+        position: { x: 400, y: 200 },
+        data: { label: 'node 4' },
+    },
 ];
 
-const initialEdges: Edge[] = [];
+const initialEdges: Edge[] = [
+    { id: 'edge-1', source: 'node-1', target: 'node-2', sourceHandle: 'a' },
+    { id: 'edge-2', source: 'node-1', target: 'node-3', sourceHandle: 'b' },
+    { id: 'edge-3', source: 'node-1', target: 'node-4', sourceHandle: 'c' },
+];
 
 const rfStyle: CSSProperties = {
     backgroundColor: '#B8CEFF',
