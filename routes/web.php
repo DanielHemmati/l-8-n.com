@@ -27,6 +27,10 @@ Route::get('/flow', function () {
     return Inertia::render('flow');
 })->name('flow');
 
+Route::get('/slide-show', function () {
+    return Inertia::render('slide-show');
+})->name('slide-show');
+
 Route::get('/tic', function () {
     return Inertia::render('tic');
 })->name('tic');
