@@ -27,5 +27,9 @@ Route::get('/flow', function () {
     return Inertia::render('flow');
 })->name('flow');
 
+Route::get('/tic', function () {
+    return Inertia::render('tic');
+})->name('tic');
+
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
