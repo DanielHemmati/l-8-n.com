@@ -31,6 +31,10 @@ Route::get('/slide-show', function () {
     return Inertia::render('slide-show');
 })->name('slide-show');
 
+Route::get('/audio', function () {
+    return Inertia::render('audio');
+})->name('audio');
+
 Route::get('/tic', function () {
     return Inertia::render('tic');
 })->name('tic');
