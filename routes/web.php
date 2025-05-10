@@ -19,22 +19,9 @@ Route::get('/test', function () {
 
     $res = $end->diffForHumans($start);
     printf($res);
-
-
 })->name('test');
 
-Route::get('/flow', function () {
-    return Inertia::render('flow');
-})->name('flow');
 
-Route::get('/slide-show', function () {
-    return Inertia::render('slide-show');
-})->name('slide-show');
-
-
-Route::get('/tic', function () {
-    return Inertia::render('tic');
-})->name('tic');
-
+require __DIR__ . '/playground.php';
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
