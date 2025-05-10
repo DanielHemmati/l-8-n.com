@@ -1,7 +1,65 @@
-import { Edge, type Node } from '@xyflow/react';
+import { Edge, Node } from '@xyflow/react';
 import { SLIDE_HEIGHT, SLIDE_PADDING, SLIDE_WIDTH, SlideData } from './Slide';
 
-export const slidesToElement = (initial: string, slides: Record<string, SlideData>) => {
+const slide01 = {
+    id: '01',
+    data: {
+        right: '02',
+        source: `
+# Slide 1
+
+- This is the first slide
+- It has a right arrow to go to the next slide
+`,
+    },
+};
+
+const slide02 = {
+    id: '02',
+    data: {
+        left: '01',
+        up: '03',
+        right: '04',
+        source: `
+# Slide 2
+
+- This is the second slide
+- It has a left arrow to go back to the first slide
+- It has an up arrow to go to the third slide
+- It has a right arrow to go to the fourth slide
+`,
+    },
+};
+
+const slide03 = {
+    id: '03',
+    data: {
+        down: '02',
+        source: `
+# Slide 3
+
+- This is the third slide
+- It has a down arrow to go back to the second slide
+`,
+    },
+};
+
+const slide04 = {
+    id: '04',
+    data: {
+        left: '02',
+        source: `
+# Slide 4
+
+- This is the fourth slide
+- It has a left arrow to go back to the second slide
+`,
+    },
+};
+
+export const slides: Record<string, SlideData> = Object.fromEntries([slide01, slide02, slide03, slide04].map(({ id, data }) => [id, data]));
+
+export const slidesToElements = (initial: string, slides: Record<string, SlideData>) => {
     const stack = [{ id: initial, position: { x: 0, y: 0 } }];
     const visited = new Set();
     const nodes: Node<SlideData>[] = [];
@@ -9,16 +67,22 @@ export const slidesToElement = (initial: string, slides: Record<string, SlideDat
 
     while (stack.length) {
         const { id, position } = stack.pop()!;
+        console.log(slides);
         const data = slides[id];
         const node = { id, type: 'slide', position, data };
 
         if (data.left && !visited.has(data.left)) {
             const nextPosition = {
-                x: position.x - SLIDE_WIDTH,
+                x: position.x - (SLIDE_WIDTH + SLIDE_PADDING),
                 y: position.y,
             };
+
             stack.push({ id: data.left, position: nextPosition });
-            edges.push({ id: `${id}->${data.left}`, source: id, target: data.left });
+            edges.push({
+                id: `${id}->${data.left}`,
+                source: id,
+                target: data.left,
+            });
         }
 
         if (data.up && !visited.has(data.up)) {
@@ -26,12 +90,9 @@ export const slidesToElement = (initial: string, slides: Record<string, SlideDat
                 x: position.x,
                 y: position.y - (SLIDE_HEIGHT + SLIDE_PADDING),
             };
+
             stack.push({ id: data.up, position: nextPosition });
-            edges.push({
-                id: `${id}->${data.up}`,
-                source: id,
-                target: data.up,
-            });
+            edges.push({ id: `${id}->${data.up}`, source: id, target: data.up });
         }
 
         if (data.down && !visited.has(data.down)) {
@@ -39,6 +100,7 @@ export const slidesToElement = (initial: string, slides: Record<string, SlideDat
                 x: position.x,
                 y: position.y + (SLIDE_HEIGHT + SLIDE_PADDING),
             };
+
             stack.push({ id: data.down, position: nextPosition });
             edges.push({
                 id: `${id}->${data.down}`,
@@ -52,9 +114,10 @@ export const slidesToElement = (initial: string, slides: Record<string, SlideDat
                 x: position.x + (SLIDE_WIDTH + SLIDE_PADDING),
                 y: position.y,
             };
+
             stack.push({ id: data.right, position: nextPosition });
             edges.push({
-                id: `${id}->${data.right}`,
+                id: `${id}->${data.down}`,
                 source: id,
                 target: data.right,
             });

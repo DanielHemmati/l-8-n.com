@@ -1,4 +1,5 @@
-import { NodeProps, type Edge, type Node } from '@xyflow/react';
+import { NodeProps, useReactFlow, type Node } from '@xyflow/react';
+import { useCallback } from 'react';
 import { Remark } from 'react-remark';
 
 export const SLIDE_WIDTH = 1920;
@@ -14,19 +15,37 @@ export type SlideData = {
     right?: string;
 };
 
-
 const style = {
     width: `${SLIDE_WIDTH}px`,
     height: `${SLIDE_HEIGHT}px`,
 } satisfies React.CSSProperties;
 
 export function Slide({ data }: NodeProps<SlideNode>) {
+    const { source, left, up, down, right } = data;
+    const { fitView } = useReactFlow();
+
+    const moveToNextSlide = useCallback(
+        (event: React.MouseEvent, id: string) => {
+            // Prevent the click event from propagating so `onNodeClick` is not
+            // triggered when clicking on the control buttons.
+            event.stopPropagation();
+            fitView({ nodes: [{ id }], duration: 100 });
+        },
+        [fitView],
+    );
+
     return (
         <article
-            className="nodrag slide"
+            className="slide"
             style={style}
         >
-            <Remark>{data.source}</Remark>
+            <Remark>{source}</Remark>
+            <footer className="slide__controls nopan">
+                {left && <button onClick={(e) => moveToNextSlide(e, left)}>←</button>}
+                {up && <button onClick={(e) => moveToNextSlide(e, up)}>↑</button>}
+                {down && <button onClick={(e) => moveToNextSlide(e, down)}>↓</button>}
+                {right && <button onClick={(e) => moveToNextSlide(e, right)}>→</button>}
+            </footer>
         </article>
     );
 }
