@@ -22,32 +22,38 @@ import NumberInput from './NumberInput';
 
 const initialNodes: Node[] = [
     {
-        type: 'NumberInput',
         id: '1',
+        type: 'NumberInput',
         data: { label: 'Red', value: 255 },
         position: { x: 0, y: 0 },
     },
     {
-        type: 'NumberInput',
         id: '2',
+        type: 'NumberInput',
         data: { label: 'Green', value: 0 },
         position: { x: 0, y: 100 },
     },
     {
-        type: 'NumberInput',
         id: '3',
+        type: 'NumberInput',
         data: { label: 'Blue', value: 0 },
         position: { x: 0, y: 200 },
     },
     {
-        type: 'ColorPreview',
+        id: '4',
+        type: 'NumberInput',
+        data: { label: 'Blue', value: 200 },
+        position: { x: 0, y: 300 },
+    },
+    {
         id: 'color',
+        type: 'ColorPreview',
         position: { x: 150, y: 50 },
         data: { label: 'Color', value: { r: undefined, g: undefined, b: undefined } },
     },
     {
-        type: 'LightnessNode',
         id: 'lightness',
+        type: 'LightnessNode',
         position: { x: 350, y: 75 },
         data: { label: 'Lightness' },
     },
@@ -68,8 +74,8 @@ const initialNodes: Node[] = [
 const initialEdges: Edge[] = [
     {
         id: '1-color',
-        source: '1',
-        target: 'color',
+        source: '1', // source is equal to the id of red number input node
+        target: 'color', // target is the id of the colorPreview node
         targetHandle: 'red',
     },
     {

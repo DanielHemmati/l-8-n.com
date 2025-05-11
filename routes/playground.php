@@ -11,9 +11,9 @@ Route::get('/slide-show', function () {
     return Inertia::render('slide-show');
 })->name('slide-show');
 
-Route::get('/custom-component', function () {
-    return Inertia::render('custom-component');
-})->name('custom-component');
+Route::get('/side-page', function () {
+    return Inertia::render('side-page');
+})->name('side-page');
 
 Route::get('/tic', function () {
     return Inertia::render('tic');

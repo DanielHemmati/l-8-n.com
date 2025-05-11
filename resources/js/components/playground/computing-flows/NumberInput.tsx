@@ -5,9 +5,10 @@ function NumberInput({ id, data }) {
     const [number, setNumber] = useState(data.value);
     const { updateNodeData } = useReactFlow();
 
-    const onChange = useCallback((evt) => {
-        const cappedNumber = Math.round(Math.min(255, Math.max(0, evt.target.value)));
+    const onChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
+        const cappedNumber = Math.round(Math.min(255, Math.max(0, +evt.target.value)));
         setNumber(cappedNumber);
+        // why id? which one should i update the value?
         updateNodeData(id, { value: cappedNumber });
     }, []);
 

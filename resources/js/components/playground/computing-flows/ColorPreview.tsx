@@ -12,7 +12,6 @@ function CustomHandle({ id, label, onChange }) {
         handleType: 'target',
         handleId: id,
     });
-
     const nodeData = useNodesData(connections?.[0].source);
 
     useEffect(() => {
