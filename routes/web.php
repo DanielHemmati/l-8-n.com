@@ -12,9 +12,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 
-    Route::get('editor', function () {
-        return Inertia::render('editor');
-    })->name('editor');
+    Route::get('workflow', function () {
+        return Inertia::render('workflow');
+    })->name('workflow');
 });
 
 
