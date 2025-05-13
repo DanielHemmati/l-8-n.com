@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// for learning purpose
 Route::get('/flow', function () {
     return Inertia::render('flow');
 })->name('flow');

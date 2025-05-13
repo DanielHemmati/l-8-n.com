@@ -11,15 +11,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
+
+    Route::get('editor', function () {
+        return Inertia::render('editor');
+    })->name('editor');
 });
-
-Route::get('/test', function () {
-    $start = Carbon\CarbonImmutable::now();
-    $end = $start->addDays();
-
-    $res = $end->diffForHumans($start);
-    printf($res);
-})->name('test');
 
 
 require __DIR__ . '/playground.php';
