@@ -9,28 +9,29 @@ import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: '/dashboard',
+        title: 'workflow 1',
+        href: '/editor/<name of the workflow>',
         icon: LayoutGrid,
     },
 ];
 
+// TODO: add your own
 const footerNavItems: NavItem[] = [
     {
         title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
+        href: 'https://github.com/DanielHemmati/l-8-n.com',
         icon: Folder,
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
+        title: 'Documentation (WIP)',
+        href: 'https://l-8-n.com',
         icon: BookOpen,
     },
 ];
 
 export function AppSidebar() {
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar collapsible="icon" variant="sidebar">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
