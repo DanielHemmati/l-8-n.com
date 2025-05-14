@@ -4,7 +4,7 @@ import { memo } from 'react';
 
 const PlaceholderNodeDemo = memo(({ selected }: NodeProps) => {
     return (
-        <PlaceholderNode selected={selected} draggable={true} >
+        <PlaceholderNode selected={selected}>
             <div>+</div>
         </PlaceholderNode>
     );

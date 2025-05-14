@@ -10,7 +10,7 @@ import AppLogo from './app-logo';
 const mainNavItems: NavItem[] = [
     {
         title: 'workflow 1',
-        href: '/editor/<name of the workflow>',
+        href: '/editor/<name of the workflow>', //WIP
         icon: LayoutGrid,
     },
 ];

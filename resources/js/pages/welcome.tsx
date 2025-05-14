@@ -1,14 +1,20 @@
+import Container from '@/components/layout/Container';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import Container from '@/components/layout/Container';
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
 
     return (
         <>
             <Head title="Welcome">
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+                <link
+                    rel="preconnect"
+                    href="https://fonts.bunny.net"
+                />
+                <link
+                    href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600"
+                    rel="stylesheet"
+                />
             </Head>
             <Container>
                 <header className="">
@@ -40,7 +46,7 @@ export default function Welcome() {
                 </header>
                 <div className="flex w-full items-center justify-center opacity-100 transition-opacity duration-750 lg:grow starting:opacity-0">
                     <main className="flex w-full max-w-[335px] flex-col-reverse lg:max-w-4xl lg:flex-row">
-                        <h1>hello world</h1>
+                        <h1 onDoubleClick={() => alert('you click me twice')}>hello world</h1>
                     </main>
                 </div>
             </Container>
