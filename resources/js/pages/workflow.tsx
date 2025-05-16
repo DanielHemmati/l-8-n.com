@@ -1,10 +1,11 @@
 import { AppSidebar } from '@/components/app-sidebar';
-import { NodeConfigModal } from '@/components/editor/ndv-node';
+import { NodeDetailViewDialog } from '@/components/editor/ndv-node';
 import { nodeTypes } from '@/components/editor/node-config/node-types';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useStore } from '@/lib/editor-store';
-import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode } from '@xyflow/react';
+import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 // import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
@@ -24,8 +25,13 @@ const selector = (state) => ({
 
 // workflow page
 function Workflow() {
+    const [selectedNode, setSelectedNode] = useState<Node | null>(null);
     const { nodes, edges, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
-    console.log('isDialogOpen', isDialogOpen);
+
+    const handleNodeClick = useCallback((_, node: Node) => {
+        setSelectedNode(node);
+    }, []);
+
     return (
         <SidebarProvider>
             <AppSidebar />
@@ -39,7 +45,12 @@ function Workflow() {
                             onEdgesChange={onEdgesChange}
                             onConnect={onConnect}
                             nodeTypes={nodeTypes}
+                            snapToGrid
+                            snapGrid={[20, 20]}
+                            minZoom={0}
                             fitView
+                            // for showing the node data on ndv
+                            onNodeClick={handleNodeClick} // i think this is faster than onNodeDoubleClick
                             // <figma like canvas>
                             panOnDrag={[1]} // only middle mouse button
                             panOnScroll
@@ -53,7 +64,9 @@ function Workflow() {
                         <Panel position="top-left">
                             <SidebarTrigger />
                         </Panel>
-                        {isDialogOpen && <NodeConfigModal />}
+
+                        {/* send the detailf of a node to the dialog */}
+                        {isDialogOpen && <NodeDetailViewDialog node={selectedNode} />}
                     </ReactFlowProvider>
                 </div>
             </SidebarInset>

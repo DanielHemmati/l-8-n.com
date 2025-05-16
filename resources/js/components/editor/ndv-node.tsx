@@ -3,18 +3,23 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useStore } from '@/lib/editor-store';
+import { type Node } from '@xyflow/react';
 import { useShallow } from 'zustand/react/shallow';
 
 const selector = (state) => ({
     isDialogOpen: state.isDialogOpen,
     closeDialog: state.closeDialog,
+    nodeResult: state.nodeResult,
 });
 
-export function NodeConfigModal() {
-    const { isDialogOpen, closeDialog } = useStore(useShallow(selector));
+export function NodeDetailViewDialog({ node }: { node: Node | null }) {
+    const { isDialogOpen, closeDialog, } = useStore(useShallow(selector));
     return (
-        <Dialog open={isDialogOpen} onOpenChange={closeDialog}>
-            <DialogContent className="sm:max-w-[425px] bg-white">
+        <Dialog
+            open={isDialogOpen}
+            onOpenChange={closeDialog}
+        >
+            <DialogContent className="sm:max-w-[925px] bg-white">
                 <DialogHeader>
                     <DialogTitle>Edit profile</DialogTitle>
                     <DialogDescription>Make changes to your profile here. Click save when you're done.</DialogDescription>

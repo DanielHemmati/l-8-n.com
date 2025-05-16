@@ -15,4 +15,7 @@ export type AppState = {
     openDialog: () => void;
     closeDialog: () => void;
     toggleDialog: () => void;
+
+    nodeResult: JSON | string | null;
+    setNodeResult: (nodeResult: JSON | string | null) => void;
 };
