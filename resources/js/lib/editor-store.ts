@@ -49,4 +49,18 @@ export const useStore = create<AppState>((set, get) => ({
         set({ nodeResult: get().nodeResult });
     },
     // </node result>
+
+    // <List of all Nodes>
+    allNodes: [],
+    setAllNodes: () => {
+        set({ allNodes: get().allNodes });
+    },
+    // </List of all Nodes>
+
+    // <nodes by category>
+    nodesByCategoryStore: null,
+    setNodesByCategoryStore: () => {
+        set({ nodesByCategoryStore: get().nodesByCategoryStore });
+    },
+    // </nodes by category>
 }));

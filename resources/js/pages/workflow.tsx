@@ -3,9 +3,10 @@ import { NodeDetailViewDialog } from '@/components/editor/ndv-node';
 import { nodeTypes } from '@/components/editor/node-config/node-types';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { useStore } from '@/lib/editor-store';
+import { NodesByCategoryType } from '@/types/editor-types';
 import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 // import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
@@ -24,7 +25,7 @@ const selector = (state) => ({
 });
 
 // workflow page
-function Workflow() {
+function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType }) {
     const [selectedNode, setSelectedNode] = useState<Node | null>(null);
     const { nodes, edges, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
 
@@ -34,7 +35,7 @@ function Workflow() {
 
     return (
         <SidebarProvider>
-            <AppSidebar />
+            <AppSidebar nodesByCategory={nodesByCategory} />
             <SidebarInset className="bg-transparent">
                 <div className="h-full w-full">
                     <ReactFlowProvider>
