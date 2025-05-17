@@ -12,6 +12,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useDnD } from '@/context/DnDContext';
 import { type NavItem } from '@/types';
 import { type NodesByCategoryType } from '@/types/editor-types';
 import { Link } from '@inertiajs/react';
@@ -42,6 +43,13 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar({ nodesByCategory }: { nodesByCategory: NodesByCategoryType }) {
+    const [_, setType] = useDnD();
+
+    const onDragStart = (event, nodeType) => {
+        if(setType) setType(nodeType);
+        event.dataTransfer.effectAllowed = 'move';
+    };
+
     return (
         <Sidebar
             collapsible="icon"
@@ -87,9 +95,13 @@ export function AppSidebar({ nodesByCategory }: { nodesByCategory: NodesByCatego
                                     <SidebarMenu>
                                         {nodes.map((node, index) => (
                                             <SidebarMenuItem key={`${category}-${index}`}>
-                                                <SidebarMenuButton asChild>
+                                                <SidebarMenuButton
+                                                    asChild
+                                                    onDragStart={(event) => onDragStart(event, node.type)}
+                                                    draggable
+                                                >
                                                     <div className="flex">
-                                                        <span className="text-lg">{node.icon}</span>
+                                                        <span className="text-sm">{node.icon}</span>
                                                         <span className="font-medium">{node.displayName}</span>
                                                         {/* TODO: show description somehow */}
                                                         {/* <p className="text-sm text-muted-foreground">{node.description}</p> */}

@@ -6,8 +6,9 @@ import { useStore } from '@/lib/editor-store';
 import { NodesByCategoryType } from '@/types/editor-types';
 import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+
 // import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 const selector = (state) => ({
@@ -32,6 +33,7 @@ function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType })
     const handleNodeClick = useCallback((_, node: Node) => {
         setSelectedNode(node);
     }, []);
+
 
     return (
         <SidebarProvider>

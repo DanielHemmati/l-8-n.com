@@ -36,6 +36,7 @@ export type NodeConfig = {
     category: string;
     displayName: string;
     description: string;
+    type: string;
     icon: string;
     tags: string[];
     inputs?: {
