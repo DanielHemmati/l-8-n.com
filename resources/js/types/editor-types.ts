@@ -1,6 +1,5 @@
 import { type Edge, type Node, type OnConnect, type OnEdgesChange, type OnNodesChange } from '@xyflow/react';
 
-
 export type AppState = {
     nodes: Node[];
     edges: Edge[];
@@ -22,14 +21,17 @@ export type AppState = {
     allNodes: Node[];
     setAllNodes: () => void;
 
-    nodesByCategoryStore: NodesByCategoryType | null,
-    setNodesByCategoryStore: () => void,
+    nodesByCategoryStore: NodesByCategoryType | null;
+    setNodesByCategoryStore: () => void;
 };
 
 export type NodeInput = {
     // we have to add more in here
-    type: 'input' | 'checkbox' | 'select' | 'password';
+    id: string; // for rendering on ui
+    type: 'text' | 'checkbox' | 'select' | 'password';
     required: boolean;
+    label: string;
+    options?: string[];
 };
 
 export type NodeConfig = {
@@ -40,10 +42,8 @@ export type NodeConfig = {
     type: string;
     icon: string;
     tags: string[];
-    inputs?: {
-        [key: string]: NodeInput;
-    }
-}
+    inputs?: NodeInput[]; // some nodes might not having anything, idk at this point
+};
 
 export type NodesByCategoryType = {
     [key: string]: NodeConfig[];

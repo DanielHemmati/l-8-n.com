@@ -4,7 +4,7 @@ import { nodeTypes } from '@/components/editor/node-config/node-types';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { DnDProvider, useDnD } from '@/context/DnDContext';
 import { useStore } from '@/lib/editor-store';
-import { NodesByCategoryType } from '@/types/editor-types';
+import { NodeInput, NodesByCategoryType } from '@/types/editor-types';
 import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, useReactFlow, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useRef, useState } from 'react';
@@ -30,7 +30,23 @@ const selector = (state) => ({
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
-function WorkFlowReactFlow() {
+function getDisplayNameByType(type: string, nodesConfig: NodesByCategoryType): string | undefined {
+    for (const nodes of Object.values(nodesConfig)) {
+        const found = nodes.find((node) => node.type === type);
+        if (found) return found.displayName;
+    }
+    return undefined;
+}
+
+function getNodeInputsByType(type: string, nodesConfig: NodesByCategoryType): NodeInput[] | undefined {
+    for (const nodes of Object.values(nodesConfig)) {
+        const found = nodes.find((node) => node.type === type);
+        if (found && found.inputs) return Object.values(found.inputs);
+    }
+    return undefined;
+}
+
+function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }) {
     const [selectedNode, setSelectedNode] = useState<Node | null>(null);
     const { nodes, edges, setNodes, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
     const { screenToFlowPosition } = useReactFlow();
@@ -55,6 +71,9 @@ function WorkFlowReactFlow() {
                 return;
             }
 
+            const displayName = getDisplayNameByType(type, nodesConfig);
+            const inputs = getNodeInputsByType(type, nodesConfig);
+
             const position = screenToFlowPosition({
                 x: event.clientX,
                 y: event.clientY,
@@ -63,7 +82,8 @@ function WorkFlowReactFlow() {
                 id: getId(),
                 type,
                 position,
-                data: { label: `${type} node` },
+                inputs, // for dynamnic inputs, important for ndv-node.tsx
+                data: { label: `${type} node`, displayName, },
             };
 
             // setNodes([...nodes, newNode]);
@@ -71,7 +91,6 @@ function WorkFlowReactFlow() {
         },
         [screenToFlowPosition, type],
     );
-
 
     return (
         <div
@@ -115,6 +134,7 @@ function WorkFlowReactFlow() {
 
 // workflow page
 function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType }) {
+    console.log(nodesByCategory);
     return (
         //? still i don't konw why DnDProvider should be at top. maybe i can still use zustand for this
         <DnDProvider>
@@ -122,7 +142,7 @@ function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType })
                 <AppSidebar nodesByCategory={nodesByCategory} />
                 <SidebarInset>
                     <ReactFlowProvider>
-                        <WorkFlowReactFlow />
+                        <WorkFlowReactFlow nodesConfig={nodesByCategory} />
                     </ReactFlowProvider>
                 </SidebarInset>
             </SidebarProvider>
