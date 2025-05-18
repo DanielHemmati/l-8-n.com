@@ -34,13 +34,12 @@ function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType })
         setSelectedNode(node);
     }, []);
 
-
     return (
         <SidebarProvider>
             <AppSidebar nodesByCategory={nodesByCategory} />
             <SidebarInset className="bg-transparent">
-                <div className="h-full w-full">
-                    <ReactFlowProvider>
+                <ReactFlowProvider>
+                    <div className="h-full w-full">
                         <ReactFlow
                             nodes={nodes}
                             edges={edges}
@@ -70,8 +69,8 @@ function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType })
 
                         {/* send the detailf of a node to the dialog */}
                         {isDialogOpen && <NodeDetailViewDialog node={selectedNode} />}
-                    </ReactFlowProvider>
-                </div>
+                    </div>
+                </ReactFlowProvider>
             </SidebarInset>
         </SidebarProvider>
     );
