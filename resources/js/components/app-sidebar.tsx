@@ -99,7 +99,6 @@ export function AppSidebar({ nodesByCategory }: { nodesByCategory: NodesByCatego
                                                     asChild
                                                     onDragStart={(event) => onDragStart(event, node.type)}
                                                     draggable
-                                                    asChild
                                                 >
                                                     <div className="flex">
                                                         <span className="text-sm">{node.icon}</span>
