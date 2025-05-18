@@ -2,11 +2,12 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { NodeDetailViewDialog } from '@/components/editor/ndv-node';
 import { nodeTypes } from '@/components/editor/node-config/node-types';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { DnDProvider, useDnD } from '@/context/DnDContext';
 import { useStore } from '@/lib/editor-store';
 import { NodesByCategoryType } from '@/types/editor-types';
-import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, type Node } from '@xyflow/react';
+import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, useReactFlow, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 // import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -14,6 +15,7 @@ import { useShallow } from 'zustand/react/shallow';
 const selector = (state) => ({
     nodes: state.nodes,
     edges: state.edges,
+    setNodes: state.setNodes,
     onNodesChange: state.onNodesChange,
     onEdgesChange: state.onEdgesChange,
     onConnect: state.onConnect,
@@ -25,55 +27,104 @@ const selector = (state) => ({
     // </dialog>
 });
 
-// workflow page
-function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType }) {
+let id = 0;
+const getId = () => `dndnode_${id++}`;
+
+function WorkFlowReactFlow() {
     const [selectedNode, setSelectedNode] = useState<Node | null>(null);
-    const { nodes, edges, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
+    const { nodes, edges, setNodes, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
+    const { screenToFlowPosition } = useReactFlow();
+    const reactFlowWrapper = useRef<HTMLDivElement>(null);
+    const [type] = useDnD();
 
     const handleNodeClick = useCallback((_, node: Node) => {
         setSelectedNode(node);
     }, []);
 
+    const onDragOver = useCallback((event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+    }, []);
+
+    const onDrop = useCallback(
+        (event) => {
+            event.preventDefault();
+
+            // check if the dropped element is valid
+            if (!type) {
+                return;
+            }
+
+            const position = screenToFlowPosition({
+                x: event.clientX,
+                y: event.clientY,
+            });
+            const newNode = {
+                id: getId(),
+                type,
+                position,
+                data: { label: `${type} node` },
+            };
+
+            setNodes([...nodes, newNode]);
+        },
+        [screenToFlowPosition, type],
+    );
 
     return (
-        <SidebarProvider>
-            <AppSidebar nodesByCategory={nodesByCategory} />
-            <SidebarInset className="bg-transparent">
-                <div className="h-full w-full">
-                    <ReactFlowProvider>
-                        <ReactFlow
-                            nodes={nodes}
-                            edges={edges}
-                            onNodesChange={onNodesChange}
-                            onEdgesChange={onEdgesChange}
-                            onConnect={onConnect}
-                            nodeTypes={nodeTypes}
-                            snapToGrid
-                            snapGrid={[20, 20]}
-                            minZoom={0}
-                            fitView
-                            // for showing the node data on ndv
-                            onNodeClick={handleNodeClick} // i think this is faster than onNodeDoubleClick
-                            // <figma like canvas>
-                            panOnDrag={[1]} // only middle mouse button
-                            panOnScroll
-                            selectionOnDrag
-                            selectionMode={SelectionMode.Partial}
-                            // </figma like canvas>
-                        />
-                        <Background color="#888" />
-                        <MiniMap />
-                        <Controls />
-                        <Panel position="top-left">
-                            <SidebarTrigger />
-                        </Panel>
+        <div
+            className="h-full w-full"
+            ref={reactFlowWrapper}
+        >
+            <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                nodeTypes={nodeTypes}
+                snapToGrid
+                snapGrid={[20, 20]}
+                minZoom={0}
+                fitView
+                // for showing the node data on ndv
+                onNodeClick={handleNodeClick} // i think this is faster than onNodeDoubleClick
+                // <figma like canvas>
+                panOnDrag={[1]} // only middle mouse button
+                panOnScroll
+                selectionOnDrag
+                selectionMode={SelectionMode.Partial}
+                // </figma like canvas>
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+            />
+            <Background color="#888" />
+            <MiniMap />
+            <Controls />
+            <Panel position="top-left">
+                <SidebarTrigger />
+            </Panel>
 
-                        {/* send the detailf of a node to the dialog */}
-                        {isDialogOpen && <NodeDetailViewDialog node={selectedNode} />}
+            {/* send the detailf of a node to the dialog */}
+            {isDialogOpen && <NodeDetailViewDialog node={selectedNode} />}
+        </div>
+    );
+}
+
+// workflow page
+function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType }) {
+    return (
+        //? still i don't konw why DnDProvider should be at top. maybe i can still use zustand for this
+        <DnDProvider>
+            <SidebarProvider>
+                <AppSidebar nodesByCategory={nodesByCategory} />
+                <SidebarInset>
+                    <ReactFlowProvider>
+                        <WorkFlowReactFlow />
                     </ReactFlowProvider>
-                </div>
-            </SidebarInset>
-        </SidebarProvider>
+                </SidebarInset>
+            </SidebarProvider>
+        </DnDProvider>
     );
 }
 
