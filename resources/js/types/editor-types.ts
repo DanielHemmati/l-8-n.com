@@ -8,7 +8,8 @@ export type AppState = {
     onNodesChange: OnNodesChange<Node>;
     onEdgesChange: OnEdgesChange;
     onConnect: OnConnect;
-    setNodes: (nodes: Node[]) => void;
+    // setNodes: (nodes: Node[]) => void;
+    setNodes: (updater: Node[] | ((nodes: Node[]) => Node[])) => void;
     setEdges: (edges: Edge[]) => void;
 
     openDialog: () => void;

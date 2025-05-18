@@ -4,7 +4,6 @@ import { type AppState } from '@/types/editor-types';
 import { addEdge, applyEdgeChanges, applyNodeChanges } from '@xyflow/react';
 import { create } from 'zustand';
 
-
 export const useStore = create<AppState>((set, get) => ({
     nodes: initialNodes,
     edges: initialEdges,
@@ -23,8 +22,11 @@ export const useStore = create<AppState>((set, get) => ({
             edges: addEdge(connection, get().edges),
         });
     },
-    setNodes: (nodes) => {
-        set({ nodes });
+    setNodes: (updater) => {
+        // set({ nodes: typeof updater === 'function' ? updater(get().nodes) : updater });
+        set((state) => ({
+            nodes: typeof updater === 'function' ? updater(state.nodes) : updater,
+        }));
     },
     setEdges: (edges) => {
         set({ edges });

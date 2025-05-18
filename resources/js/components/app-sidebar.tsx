@@ -46,7 +46,7 @@ export function AppSidebar({ nodesByCategory }: { nodesByCategory: NodesByCatego
     const [_, setType] = useDnD();
 
     const onDragStart = (event, nodeType) => {
-        if (setType) setType(nodeType);
+        setType?.(nodeType);
         event.dataTransfer.effectAllowed = 'move';
     };
 
@@ -97,11 +97,9 @@ export function AppSidebar({ nodesByCategory }: { nodesByCategory: NodesByCatego
                                             <SidebarMenuItem key={`${category}-${index}`}>
                                                 <SidebarMenuButton
                                                     asChild
-                                                    onDragStart={(event) => {
-                                                        // TODO: test this
-                                                        onDragStart(event, node.type);
-                                                    }}
+                                                    onDragStart={(event) => onDragStart(event, node.type)}
                                                     draggable
+                                                    asChild
                                                 >
                                                     <div className="flex">
                                                         <span className="text-sm">{node.icon}</span>

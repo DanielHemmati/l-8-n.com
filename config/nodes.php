@@ -20,4 +20,12 @@ return [
             ],
         ],
     ],
+    'input.node' => [
+        'category' => 'Input',
+        'displayName' => 'Input',
+        'type' => 'input',
+        'description' => 'Input node',
+        'icon' => '🔄',
+        'tags' => ['input'],
+    ],
 ];
