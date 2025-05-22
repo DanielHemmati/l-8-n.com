@@ -23,7 +23,6 @@ export const useStore = create<AppState>((set, get) => ({
         });
     },
     setNodes: (updater) => {
-        // set({ nodes: typeof updater === 'function' ? updater(get().nodes) : updater });
         set((state) => ({
             nodes: typeof updater === 'function' ? updater(state.nodes) : updater,
         }));
