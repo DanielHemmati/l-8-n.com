@@ -19,3 +19,7 @@ Route::get('/side-page', function () {
 Route::get('/tic', function () {
     return Inertia::render('tic');
 })->name('tic');
+
+Route::get('/resize', function () {
+    return Inertia::render('resize');
+})->name('resize');

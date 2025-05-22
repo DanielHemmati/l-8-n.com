@@ -7,12 +7,13 @@ use Illuminate\Support\Str;
  * What category should i use for the nodes ?
  * Is category the same as the type ?
  *
+ * There should be at least some type safety in here. other wise it will be a mess.
  */
 
 return [
     'HttpRequest.node' => [
         'id' => 'httpRequest.node.' . Str::random(10),
-        'category' => 'API', // this is the category of the node, still not sure about naming
+        'category' => '🧩 API', // this is the category of the node, still not sure about naming
         'displayName' => 'HTTP Request',
         'type' => 'HttpRequest.node', // this helps for drag and drop
         'description' => 'Make an HTTP request',
@@ -41,5 +42,13 @@ return [
                 ],
             ],
         ],
+    ],
+    'Trigger.node' => [
+        'id' => 'trigger.node.' . Str::random(10),
+        'category' => '💥 Trigger nodes',
+        'displayName' => 'Trigger',
+        'type' => 'Trigger.node',
+        'description' => 'Trigger a workflow',
+        'icon'=> '👆'
     ],
 ];

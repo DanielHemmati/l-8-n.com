@@ -4,11 +4,12 @@ import { nodeTypes } from '@/components/editor/node-config/node-types';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { DnDProvider, useDnD } from '@/context/DnDContext';
 import { useStore } from '@/lib/editor-store';
-import { NodeInput, NodesByCategoryType } from '@/types/editor-types';
+import { NodeConfig, NodeInput, NodesByCategoryType } from '@/types/editor-types';
 import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, useReactFlow, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useCallback, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
+import TestExecuteButton from '@/components/editor/TestExecuteButton';
 
 // import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
@@ -47,7 +48,7 @@ function getNodeInputsByType(type: string, nodesConfig: NodesByCategoryType): No
 }
 
 function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }) {
-    const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+    const [selectedNode, setSelectedNode] = useState<Node | NodeConfig | null>(null);
     const { nodes, edges, setNodes, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
     const { screenToFlowPosition } = useReactFlow();
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
@@ -83,7 +84,7 @@ function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }
                 type,
                 position,
                 inputs, // for dynamnic inputs, important for ndv-node.tsx
-                data: { label: `${type} node`, displayName, },
+                data: { label: `${type} node`, displayName },
             };
 
             // setNodes([...nodes, newNode]);
@@ -125,9 +126,12 @@ function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }
             <Panel position="top-left">
                 <SidebarTrigger />
             </Panel>
+            <Panel position="bottom-center">
+                <TestExecuteButton />
+            </Panel>
 
             {/* send the detailf of a node to the dialog */}
-            {isDialogOpen && <NodeDetailViewDialog node={selectedNode} />}
+            {isDialogOpen && <NodeDetailViewDialog node={selectedNode as Node & NodeConfig} />}
         </div>
     );
 }
