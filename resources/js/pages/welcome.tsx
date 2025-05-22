@@ -1,6 +1,8 @@
 import Container from '@/components/layout/Container';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
+import AppearanceToggleTab from '@/components/appearance-tabs';
+
 export default function Welcome() {
     const { auth } = usePage<SharedData>().props;
 
@@ -19,6 +21,7 @@ export default function Welcome() {
             <Container>
                 <header className="">
                     <nav className="flex items-center justify-end gap-4">
+                        <AppearanceToggleTab />
                         {auth.user ? (
                             <Link
                                 href={route('dashboard')}
