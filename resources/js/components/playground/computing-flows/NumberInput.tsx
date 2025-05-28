@@ -8,7 +8,7 @@ function NumberInput({ id, data }) {
     const onChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
         const cappedNumber = Math.round(Math.min(255, Math.max(0, +evt.target.value)));
         setNumber(cappedNumber);
-        // why id? which one should i update the value?
+        // why id? which node should i update?
         updateNodeData(id, { value: cappedNumber });
     }, []);
 
