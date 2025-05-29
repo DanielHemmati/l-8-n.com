@@ -1,5 +1,7 @@
 # l8n
 
+![l8n](./docs/heading.png)
+
 ## Project Overview
 
 I started this project to understand how something like n8n works, and I wanted to recreate it using Laravel, hence the name of the project, l8n.
