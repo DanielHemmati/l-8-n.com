@@ -1,22 +1,25 @@
 import { AppSidebar } from '@/components/app-sidebar';
+import { DevTools } from '@/components/devtools';
 import { NodeDetailViewDialog } from '@/components/editor/ndv-node';
 import { nodeTypes } from '@/components/editor/node-config/node-types';
+import TestExecuteButton from '@/components/editor/TestExecuteButton';
+import { Button } from '@/components/ui/button';
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { DnDProvider, useDnD } from '@/context/DnDContext';
 import { useStore } from '@/lib/editor-store';
-import { NodeConfig, NodeInput, NodesByCategoryType } from '@/types/editor-types';
-import { Background, Controls, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, useReactFlow, type Node } from '@xyflow/react';
+import { NodeConfig, NodeInput, NodesByCategoryType, WorkflowDefinition } from '@/types/editor-types';
+import { router, useForm } from '@inertiajs/react';
+import { Background, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, useReactFlow, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useCallback, useRef, useState } from 'react';
+import { nanoid } from 'nanoid';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import TestExecuteButton from '@/components/editor/TestExecuteButton';
-
-// import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 const selector = (state) => ({
     nodes: state.nodes,
     edges: state.edges,
     setNodes: state.setNodes,
+    setEdges: state.setEdges,
     onNodesChange: state.onNodesChange,
     onEdgesChange: state.onEdgesChange,
     onConnect: state.onConnect,
@@ -27,9 +30,6 @@ const selector = (state) => ({
     // closeDialog: state.closeDialog,
     // </dialog>
 });
-
-let id = 0;
-const getId = () => `dndnode_${id++}`;
 
 function getDisplayNameByType(type: string, nodesConfig: NodesByCategoryType): string | undefined {
     for (const nodes of Object.values(nodesConfig)) {
@@ -47,12 +47,37 @@ function getNodeInputsByType(type: string, nodesConfig: NodesByCategoryType): No
     return undefined;
 }
 
-function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }) {
+function WorkFlowReactFlow({ nodesConfig, latestWorkflow, updatedNode }: { nodesConfig: NodesByCategoryType; latestWorkflow: WorkflowDefinition; updatedNode: NodeConfig }) {
+    const { nodes, edges, setNodes, setEdges, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
     const [selectedNode, setSelectedNode] = useState<Node | NodeConfig | null>(null);
-    const { nodes, edges, setNodes, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
-    const { screenToFlowPosition } = useReactFlow();
+    const { screenToFlowPosition, toObject, setViewport } = useReactFlow();
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [type] = useDnD();
+
+    console.log(updatedNode);
+
+    const { errors, processing } = useForm({
+        workflow_name: 'Untitled Workflow',
+        data: {},
+    });
+
+    // show latest workflow on first render
+    useEffect(() => {
+        if (latestWorkflow) {
+            const { nodes, edges, viewport } = latestWorkflow.data;
+            setNodes(nodes);
+            setEdges(edges);
+            setViewport(viewport);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // i want this only on first render
+
+    // TODO: add keyboard shortcut
+    const clearCanvas = useCallback(() => {
+        setNodes([]);
+        setEdges([]);
+        setViewport({ x: 0, y: 0, zoom: 1 });
+    }, [setNodes, setEdges, setViewport]);
 
     const handleNodeClick = useCallback((_, node: Node) => {
         setSelectedNode(node);
@@ -61,6 +86,19 @@ function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }
     const onDragOver = useCallback((event) => {
         event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
+    }, []);
+
+    const handleBeforeUnload = useCallback((event: BeforeUnloadEvent) => {
+        event.preventDefault();
+        return (event.returnValue = '');
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
     }, []);
 
     const onDrop = useCallback(
@@ -79,12 +117,15 @@ function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }
                 x: event.clientX,
                 y: event.clientY,
             });
+
+            // node.php and here should be almost the same
             const newNode = {
-                id: getId(),
+                id: `${type}.${nanoid()}`,
                 type,
                 position,
                 inputs, // for dynamnic inputs, important for ndv-node.tsx
-                data: { label: `${type} node`, displayName },
+                // ? is there any way to put displayName not into data?
+                data: { label: `${type}`, displayName },
             };
 
             // setNodes([...nodes, newNode]);
@@ -93,6 +134,33 @@ function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }
         [screenToFlowPosition, type],
     );
 
+    const handleSave = useCallback(
+        (e: React.FormEvent) => {
+            e.preventDefault();
+            const flow = toObject();
+            // for unkonwn reason, post from useFrom doens't work (speically when i work with setData)
+            router.post(route('workflow.store'), {
+                workflow_name: 'Untitled Workflow', // TODO: ability to change workflow name
+                // @ts-expect-error - i just want to send it back to the server
+                data: flow,
+            });
+        },
+        [toObject],
+    );
+
+    const handleExecute = useCallback(
+        (e: React.FormEvent) => {
+            e.preventDefault();
+            router.post(route('workflow.test-execute'), {
+                workflow_name: 'Untitled Workflow', // TODO: ability to change workflow name
+                // @ts-expect-error - i just want to send it back to the server
+                data: toObject(),
+            });
+        },
+        [toObject],
+    );
+
+    // console.log(data);
     return (
         <div
             className="h-full w-full"
@@ -122,12 +190,31 @@ function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }
             />
             <Background color="#888" />
             <MiniMap />
-            <Controls />
+            <Panel position="top-right">
+                <div className="flex gap-4">
+                    <form onSubmit={handleSave}>
+                        <Button
+                            type="submit"
+                            disabled={processing}
+                        >
+                            {processing ? 'saving...' : 'save'}
+                        </Button>
+                    </form>
+                    <Button
+                        type="button"
+                        onClick={clearCanvas}
+                    >
+                        clear
+                    </Button>
+                </div>
+                {errors.workflow_name && <p className="text-red-500">{errors.workflow_name}</p>}
+            </Panel>
+            <DevTools position="top-center" />
             <Panel position="top-left">
                 <SidebarTrigger />
             </Panel>
             <Panel position="bottom-center">
-                <TestExecuteButton />
+                <TestExecuteButton onClick={handleExecute} />
             </Panel>
 
             {/* send the detailf of a node to the dialog */}
@@ -137,8 +224,7 @@ function WorkFlowReactFlow({ nodesConfig }: { nodesConfig: NodesByCategoryType }
 }
 
 // workflow page
-function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType }) {
-    console.log(nodesByCategory);
+function Workflow({ nodesByCategory, latestWorkflow, updatedNode }: { nodesByCategory: NodesByCategoryType; latestWorkflow: WorkflowDefinition; updatedNode: NodeConfig }) {
     return (
         //? still i don't konw why DnDProvider should be at top. maybe i can still use zustand for this
         <DnDProvider>
@@ -146,7 +232,11 @@ function Workflow({ nodesByCategory }: { nodesByCategory: NodesByCategoryType })
                 <AppSidebar nodesByCategory={nodesByCategory} />
                 <SidebarInset>
                     <ReactFlowProvider>
-                        <WorkFlowReactFlow nodesConfig={nodesByCategory} />
+                        <WorkFlowReactFlow
+                            nodesConfig={nodesByCategory}
+                            latestWorkflow={latestWorkflow}
+                            updatedNode={updatedNode}
+                        />
                     </ReactFlowProvider>
                 </SidebarInset>
             </SidebarProvider>

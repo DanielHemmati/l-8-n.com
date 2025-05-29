@@ -16,13 +16,14 @@ export type AppState = {
     toggleDialog: () => void;
 
     nodeResult: JSON | string | null;
-    setNodeResult: (nodeResult: JSON | string | null) => void;
+    setNodeResult: () => void;
 
     allNodes: Node[];
     setAllNodes: () => void;
 
     nodesByCategoryStore: NodesByCategoryType | null;
     setNodesByCategoryStore: () => void;
+
 };
 
 export type NodeInput = {
@@ -48,3 +49,63 @@ export type NodeConfig = {
 export type NodesByCategoryType = {
     [key: string]: NodeConfig[];
 };
+
+/**
+ * Root object that you store / load.
+ */
+export interface WorkflowDefinition {
+    data: {
+        nodes: NodeDefinition[];
+        edges: EdgeDefinition[];
+        viewport: Viewport;
+    };
+}
+
+/**
+ * A single node on the canvas.
+ */
+export interface NodeDefinition {
+    id: string;
+    type: string; // e.g. "Trigger.node" | "HttpRequest.node"
+    position: Position;
+    data: NodeMeta; // display information
+    measured: Size; // bounding-box size
+    inputs?: NodeInput[]; // present only on nodes that accept inputs
+}
+
+/**
+ * Extra UI metadata shown in the node label.
+ */
+export interface NodeMeta {
+    label: string;
+    displayName: string;
+}
+
+/**
+ * A connection line (not used in your sample yet).
+ */
+export interface EdgeDefinition {
+    id: string;
+    source: string; // node.id of the output
+    target: string; // node.id of the input
+    /** Extra edge props (type, label, etc.) may be added later */
+}
+
+/**
+ * Canvas viewport when the user saved.
+ */
+export interface Viewport {
+    x: number;
+    y: number;
+    zoom: number;
+}
+
+/** Simple helpers */
+export interface Position {
+    x: number;
+    y: number;
+}
+export interface Size {
+    width: number;
+    height: number;
+}

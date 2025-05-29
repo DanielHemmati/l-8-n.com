@@ -64,4 +64,5 @@ export const useStore = create<AppState>((set, get) => ({
         set({ nodesByCategoryStore: get().nodesByCategoryStore });
     },
     // </nodes by category>
+
 }));

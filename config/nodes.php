@@ -19,6 +19,10 @@ return [
         'description' => 'Make an HTTP request',
         'icon' => '🌐',
         'tags' => ['http', 'request'],
+        'data' => [
+            'url' => null,
+            'method' => null,
+        ],
         'inputs' => [
             'url' => [
                 'id' => Str::random(10),

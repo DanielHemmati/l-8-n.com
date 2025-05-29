@@ -31,6 +31,9 @@ export const HttpRequestNode = memo(({ id, selected, data }: NodeProps<HttpReque
                 <Handle
                     type="target"
                     position={Position.Left}
+                    onClick={() => {
+                        console.log('target clicked');
+                    }}
                 />
                 <div className="text-2xl">🌐</div>
                 <Handle
