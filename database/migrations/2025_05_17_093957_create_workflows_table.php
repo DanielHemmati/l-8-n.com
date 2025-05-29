@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
-            $table->string('workflow_name');
+            $table->string('workflow_name')->default('Untitled Workflow');
             // all of the nodes and edges and their position will be stored in this
             // column using `toObject` method from react flow
             $table->json('data');
