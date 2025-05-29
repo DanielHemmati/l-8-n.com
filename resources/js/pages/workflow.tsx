@@ -8,7 +8,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/s
 import { DnDProvider, useDnD } from '@/context/DnDContext';
 import { useStore } from '@/lib/editor-store';
 import { NodeConfig, NodeInput, NodesByCategoryType, WorkflowDefinition } from '@/types/editor-types';
-import { router, useForm } from '@inertiajs/react';
+import { router, useForm, usePage } from '@inertiajs/react';
 import { Background, MiniMap, Panel, ReactFlow, ReactFlowProvider, SelectionMode, useReactFlow, type Node } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { nanoid } from 'nanoid';
@@ -47,14 +47,12 @@ function getNodeInputsByType(type: string, nodesConfig: NodesByCategoryType): No
     return undefined;
 }
 
-function WorkFlowReactFlow({ nodesConfig, latestWorkflow, updatedNode }: { nodesConfig: NodesByCategoryType; latestWorkflow: WorkflowDefinition; updatedNode: NodeConfig }) {
+function WorkFlowReactFlow({ nodesConfig, latestWorkflow }: { nodesConfig: NodesByCategoryType; latestWorkflow: WorkflowDefinition }) {
     const { nodes, edges, setNodes, setEdges, onNodesChange, onEdgesChange, onConnect, isDialogOpen } = useStore(useShallow(selector));
     const [selectedNode, setSelectedNode] = useState<Node | NodeConfig | null>(null);
     const { screenToFlowPosition, toObject, setViewport } = useReactFlow();
     const reactFlowWrapper = useRef<HTMLDivElement>(null);
     const [type] = useDnD();
-
-    console.log(updatedNode);
 
     const { errors, processing } = useForm({
         workflow_name: 'Untitled Workflow',
@@ -224,7 +222,7 @@ function WorkFlowReactFlow({ nodesConfig, latestWorkflow, updatedNode }: { nodes
 }
 
 // workflow page
-function Workflow({ nodesByCategory, latestWorkflow, updatedNode }: { nodesByCategory: NodesByCategoryType; latestWorkflow: WorkflowDefinition; updatedNode: NodeConfig }) {
+function Workflow({ nodesByCategory, latestWorkflow }: { nodesByCategory: NodesByCategoryType; latestWorkflow: WorkflowDefinition }) {
     return (
         //? still i don't konw why DnDProvider should be at top. maybe i can still use zustand for this
         <DnDProvider>
@@ -235,7 +233,6 @@ function Workflow({ nodesByCategory, latestWorkflow, updatedNode }: { nodesByCat
                         <WorkFlowReactFlow
                             nodesConfig={nodesByCategory}
                             latestWorkflow={latestWorkflow}
-                            updatedNode={updatedNode}
                         />
                     </ReactFlowProvider>
                 </SidebarInset>

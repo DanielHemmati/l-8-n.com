@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useStore } from '@/lib/editor-store';
+import { SharedData } from '@/types';
 import { NodeConfig } from '@/types/editor-types';
-// import { router } from '@inertiajs/react';
-import { router } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { useReactFlow, type Node } from '@xyflow/react';
 import { useCallback, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { LabIcon } from '../icons/LabIcon';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '../ui/resizable';
@@ -17,14 +16,13 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 const selector = (state) => ({
     isDialogOpen: state.isDialogOpen,
     closeDialog: state.closeDialog,
-    nodeResult: state.nodeResult,
-    setNodeResult: state.setNodeResult,
 });
 
 export function NodeDetailViewDialog({ node }: { node: Node & NodeConfig }) {
     const { updateNodeData } = useReactFlow();
-    const { isDialogOpen, closeDialog, setNodeResult, nodeResult } = useStore(useShallow(selector));
+    const { isDialogOpen, closeDialog } = useStore(useShallow(selector));
     const [data, setData] = useState(node.data);
+    const executionResults = usePage<SharedData>().props.execution_results;
 
     const handleOnChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,18 +38,6 @@ export function NodeDetailViewDialog({ node }: { node: Node & NodeConfig }) {
             updateNodeData(node.id, { ...data, method: value });
         },
         [node.id, updateNodeData, data],
-    );
-
-    const handleSubmit = useCallback(
-        async (e: React.FormEvent<HTMLFormElement>) => {
-            e.preventDefault();
-            router.patch(route('workflow.update-node'), {
-                nodeId: node.id,
-                data: data as Record<string, string>,
-            });
-            // closeDialog();
-        },
-        [node.id, data, closeDialog],
     );
 
     return (
@@ -74,15 +60,9 @@ export function NodeDetailViewDialog({ node }: { node: Node & NodeConfig }) {
                             <ResizableHandle withHandle />
                             <ResizablePanel className="flex justify-center">
                                 <ScrollArea className="w-full p-10">
-                                    <form
-                                        className="mb-4 flex justify-end"
-                                        onSubmit={handleSubmit}
-                                    >
-                                        <Button type="submit">
-                                            <LabIcon />
-                                            Execute step
-                                        </Button>
-                                    </form>
+                                    <div className="flex justify-end">
+                                        <Button onClick={() => closeDialog()}>Save</Button>
+                                    </div>
                                     {node.inputs?.map((input) => {
                                         switch (input.type) {
                                             case 'text':
@@ -143,7 +123,15 @@ export function NodeDetailViewDialog({ node }: { node: Node & NodeConfig }) {
                             </ResizablePanel>
                             <ResizableHandle withHandle />
                             <ResizablePanel className="flex h-full items-center justify-center">
-                                <pre>{JSON.stringify(nodeResult, null, 2)}</pre>
+                                <ScrollArea
+                                    className="h-full w-full rounded-md p-5 overflow-auto"
+                                >
+                                    {executionResults ? (
+                                        <pre className="whitespace-pre-wrap">{JSON.stringify(executionResults, null, 2)}</pre>
+                                    ) : (
+                                        <p>No execution results</p>
+                                    )}
+                                </ScrollArea>
                             </ResizablePanel>
                         </ResizablePanelGroup>
                     </div>

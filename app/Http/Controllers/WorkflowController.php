@@ -51,12 +51,15 @@ class WorkflowController extends Controller
         // start with topological sort
         $sortedNodes = $this->topologicalSort($workflow->data);
         // loop through the nodes -> we also need all of the extra information from the nodes
+        $results = [];
         foreach ($sortedNodes as $node) {
             $nodeType = explode('.', $node['id'])[0];
             $nodeFactory = NodeHandlerFactory::make($nodeType);
-            $res = $nodeFactory->handle($node);
-            Log::info($res);
+            $results[] = $nodeFactory->handle($node);
         }
+        return redirect()
+            ->route('workflow.index')
+            ->with('execution_results', $results);
     }
 
     public function topologicalSort(array $data): array
@@ -117,7 +120,7 @@ class WorkflowController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * save button on workflow page
      */
     public function store(Request $request)
     {
@@ -138,5 +141,4 @@ class WorkflowController extends Controller
 
         return redirect()->route('workflow.index');
     }
-
 }

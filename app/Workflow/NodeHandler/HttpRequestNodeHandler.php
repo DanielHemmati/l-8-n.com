@@ -9,9 +9,20 @@ class HttpRequestNodeHandler implements NodeHandlerInterface
 {
     public function handle(array $nodeData): mixed
     {
-        $testResponse = Http::get('https://jsonplaceholder.typicode.com/todos/1');
-        $testResult = $testResponse->json();
+        $url = $nodeData['data']['url'];
+        $method = $nodeData['data']['method'];
+        $nodeId = $nodeData['id'];
 
-        return $testResult;
+        if (! $url || ! $method) {
+            throw new \Exception('Invalid URL or method');
+        }
+
+        $response = Http::{$method}($url);
+        $result = $response->json();
+
+        return [
+            'nodeId' => $nodeId,
+            'result' => $result,
+        ];
     }
 }

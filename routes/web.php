@@ -5,12 +5,12 @@ use Inertia\Inertia;
 use App\Http\Controllers\WorkflowController;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    return redirect()->route('workflow.index');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
+        return redirect()->route('workflow.index');
     })->name('dashboard');
 
     // Route::get('workflow', function () {
@@ -20,10 +20,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('workflow', [WorkflowController::class, 'store'])->name('workflow.store');
 
     Route::post('workflow/test-execute', [WorkflowController::class, 'testExecute'])->name('workflow.test-execute');
-
-    // each node ndv have bunch of inputs, ... those input will update the data field of the node.
-    // for now we have only one workflow, so just start simple
-    Route::patch('workflow/update-node', [WorkflowController::class, 'updateNode'])->name('workflow.update-node');
 });
 
 
