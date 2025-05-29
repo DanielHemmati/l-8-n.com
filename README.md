@@ -12,7 +12,7 @@ I started this project to understand how something like n8n works, and I wanted 
 - **Supported Nodes**: Currently, only two nodes are supported: `Trigger Node` and `HTTP Request Node`.
 - **Known Issues**: A significant problem is that when execution is done on the backend, the result is sent to all nodes, which is not the desired behavior. However, it is sufficient for a proof of concept.
 
-## Future Plans
+## Todos:
 
 - **Immediate Focus**: Fix the issue of sending results to all nodes as quickly as possible.
 - **Enhancements**: Add more nodes. (Edit, filter, google docs, google sheets, etc)
