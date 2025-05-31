@@ -14,9 +14,10 @@ I started this project to understand how something like n8n works, and I wanted 
 
 ## Todos
 
-- **Immediate Focus**: Fix the issue of sending results to all nodes as quickly as possible.
-- **Enhancements**: Add more nodes. (Edit, filter, google docs, google sheets, etc)
-- **Testing**: Write tests 😄.
+- 🛠️ **Immediate Focus**: Fix the issue of sending results to all nodes as quickly as possible.
+- ➕ **Enhancements**: Add more nodes. (Edit, filter, google docs, google sheets, etc)
+  - 🏃‍♂️ Run Executions with queue.
+- 🧪 **Testing**: Write tests.
 
 ## Contribution
 
