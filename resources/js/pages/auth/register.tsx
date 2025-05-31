@@ -37,7 +37,9 @@ export default function Register() {
             <form className="flex flex-col gap-6" onSubmit={submit}>
                 <div className="grid gap-6">
                     <div className="grid gap-2">
-                        <Label htmlFor="name">Name</Label>
+                        <Label className="dark:text-white" htmlFor="name">
+                            Name
+                        </Label>
                         <Input
                             id="name"
                             type="text"
@@ -54,7 +56,9 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
+                        <Label className="dark:text-white" htmlFor="email">
+                            Email address
+                        </Label>
                         <Input
                             id="email"
                             type="email"
@@ -70,7 +74,9 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
+                        <Label className="dark:text-white" htmlFor="password">
+                            Password
+                        </Label>
                         <Input
                             id="password"
                             type="password"
@@ -86,7 +92,9 @@ export default function Register() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="password_confirmation">Confirm password</Label>
+                        <Label className="dark:text-white" htmlFor="password_confirmation">
+                            Confirm password
+                        </Label>
                         <Input
                             id="password_confirmation"
                             type="password"
