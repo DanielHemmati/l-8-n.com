@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Interfaces\WorkflowNode;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\ServiceProvider;
 use phpDocumentor\Reflection\DocBlock\Tags\Implements_;
@@ -29,7 +30,7 @@ class WorkflowNodeLoaderServiceProvider extends ServiceProvider
             }
 
             $reflection = new \ReflectionClass($className);
-            if ($reflection->implementsInterface()) {
+            if ($reflection->implementsInterface(WorkflowNode::class)) {
                 $this->app->bind($className, function () use ($className) {
                     return new $className();
                 });
