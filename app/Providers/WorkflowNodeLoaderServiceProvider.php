@@ -24,7 +24,7 @@ class WorkflowNodeLoaderServiceProvider extends ServiceProvider
         foreach ($files as $file) {
             $className = 'App\\Workflow\\Nodes\\' . $file->getFilenameWithoutExtension();
 
-            if (!class_exists($className)) {
+            if (! class_exists($className)) {
                 continue;
             }
 
