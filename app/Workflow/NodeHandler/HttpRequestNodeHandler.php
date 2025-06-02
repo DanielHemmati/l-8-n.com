@@ -17,7 +17,14 @@ class HttpRequestNodeHandler implements NodeHandlerInterface
             throw new \Exception('Invalid URL or method');
         }
 
-        $response = Http::{$method}($url);
+        if(app()->isLocal()) {
+            // For local development, we can skip SSL verification
+            $response = Http::withoutVerifying()->{$method}($url);
+        }
+        else {
+            // In production, we should verify SSL certificates
+            $response = Http::{$method}($url);
+        }
         $result = $response->json();
 
         return [
