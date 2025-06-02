@@ -40,6 +40,8 @@ export function NodeDetailViewDialog({ node }: { node: Node & NodeConfig }) {
         [node.id, updateNodeData, data],
     );
 
+    const validExecutionResults = executionResults && typeof executionResults === 'object' && executionResults !== null;
+
     return (
         <Dialog
             open={isDialogOpen}
@@ -126,8 +128,8 @@ export function NodeDetailViewDialog({ node }: { node: Node & NodeConfig }) {
                                 <ScrollArea
                                     className="h-full w-full rounded-md p-5 overflow-auto"
                                 >
-                                    {executionResults ? (
-                                        <pre className="whitespace-pre-wrap">{JSON.stringify(executionResults, null, 2)}</pre>
+                                    {validExecutionResults ? (
+                                        <pre className="whitespace-pre-wrap">{JSON.stringify(executionResults[node.id], null, 2)}</pre>
                                     ) : (
                                         <p>No execution results</p>
                                     )}

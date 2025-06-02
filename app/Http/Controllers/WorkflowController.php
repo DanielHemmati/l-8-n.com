@@ -55,7 +55,8 @@ class WorkflowController extends Controller
         foreach ($sortedNodes as $node) {
             $nodeType = explode('.', $node['id'])[0];
             $nodeFactory = NodeHandlerFactory::make($nodeType);
-            $results[] = $nodeFactory->handle($node);
+            //store the node id and corresponding result
+            $results[$node['id']] = $nodeFactory->handle($node);
         }
         return redirect()
             ->route('workflow.index')
